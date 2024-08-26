@@ -1,0 +1,86 @@
+# DESAFIO SCROLL
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
+from time import sleep
+
+# Login page URL
+URL = 'https://cursoautomacao.netlify.app/desafios'
+
+
+def get_chrome_options(download_path='/home/lonewolf/Downloads'):
+    """
+    Configure Chrome options for the WebDriver.
+
+    Args:
+        download_path (str): Path for default download directory.
+
+    Returns:
+        Options: Configured Chrome options.
+    """
+    chrome_options = Options()
+    # Set Chrome arguments
+    arguments = ['--lang=pt-BR', '--start-maximized']
+    for argument in arguments:
+        chrome_options.add_argument(argument)
+    
+    # Set Chrome preferences
+    prefs = {
+        'download.default_directory': download_path,
+        'download.directory_upgrade': True,
+        'download.prompt_for_download': False,
+        'profile.default_content_setting_values.notifications': 2,
+        'profile.default_content_setting_values.automatic_downloads': 1,
+    }
+    chrome_options.add_experimental_option('prefs', prefs)
+    chrome_options.add_experimental_option('detach', True)
+    
+    return chrome_options
+
+
+def start_driver(chrome_options):
+    """
+    Initialize and return the Chrome WebDriver.
+
+    Args:
+        chrome_options (Options): Configured Chrome options.
+
+    Returns:
+        WebDriver: Initialized Chrome WebDriver.
+    """
+    # Initialize the Chrome WebDriver with the specified options
+    return webdriver.Chrome(options=chrome_options)
+
+
+def main():
+    """
+    Main function.
+    """
+    # Get configured Chrome options
+    chrome_options = get_chrome_options()
+    # Start the Chrome WebDriver
+    driver = start_driver(chrome_options)
+
+    try:
+        # Open the page URL
+        driver.get(URL)
+        # Wait for the page to load
+        sleep(5)
+
+        # Rolar até o final da página
+        driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
+        sleep(5)
+
+        # Rolar até o topo da página
+        driver.execute_script('window.scrollTo(0, document.body.scrollTop);')
+        sleep(5)
+
+        # Keep the browser window open until user input
+        input('Press Enter to close the window...')
+    finally:
+        # Close the browser window
+        driver.quit()
+
+
+if __name__ == '__main__':
+    main()
